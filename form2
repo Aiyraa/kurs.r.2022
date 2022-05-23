@@ -1,0 +1,45 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;namespace kr2022
+{
+    public partial class Form2 : Form
+    {
+        ToolStripLabel dateLabel;
+        ToolStripLabel timeLabel;
+        ToolStripLabel infoLabel;
+        Timer timer;
+        public Form2()
+        {
+            InitializeComponent();
+            label1.Text = "Решето Эратосфена - один из самых распространенных методов поиска простых чисел." +
+                " Суть заключается в следующем: берется первое простое число 2 и зачеркиваются все последующие составные числа кратные 2, " +
+                "берется следующее простое число 3 и зачеркиваются последующие составные числа кратные 3, и т.д." +
+                " Действие продолжает до тех пор, пока не будут проверены и перечеркнуты все числа до N." + "\n"+
+                "\nP.s. Проверка начинается с 2, а не с 1, так как 1 есть ни простое, ни составное число.";            infoLabel = new ToolStripLabel();
+            infoLabel.Text = "Текущие дата и время:";
+            dateLabel = new ToolStripLabel();
+            timeLabel = new ToolStripLabel();
+            statusStrip1.Items.Add(infoLabel);
+            statusStrip1.Items.Add(dateLabel);
+            statusStrip1.Items.Add(timeLabel);
+            timer = new Timer() { Interval = 1000 };
+            timer.Tick += timer_Tick;
+            timer.Start();
+        }
+        void timer_Tick(object sender, EventArgs e)
+        {
+            dateLabel.Text = DateTime.Now.ToLongDateString();
+            timeLabel.Text = DateTime.Now.ToLongTimeString();
+        }
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            this.Close();
+        }
+    }
+}
