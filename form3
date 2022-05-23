@@ -1,0 +1,22 @@
+using System;
+using System.Windows.Forms;
+namespace kr2022
+{
+    public partial class Form3 : Form
+    {
+        public Form3(Form1 f)
+        {
+            InitializeComponent();
+            string counter = Convert.ToString(f.count);
+            string f_even = Convert.ToString(f.even);
+            string f_odd = Convert.ToString(f.odd);
+            label2.Text = counter + " простых чисел";
+            label3.Text = f_even;
+            label4.Text = f_odd;
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+    }
+}
