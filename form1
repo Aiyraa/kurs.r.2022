@@ -1,0 +1,176 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+namespace kr2022
+{
+    public partial class Form1 : Form
+    {
+        ToolStripLabel dateLabel;
+        ToolStripLabel timeLabel;
+        ToolStripLabel infoLabel;
+        Timer timer;
+        public int count = 0;
+        public int even = 1;
+        public int odd = 0;
+        Stopwatch sw = new Stopwatch();
+        TimeSpan ts = new TimeSpan();
+        string elapsedTime;
+        public Form1()
+        {
+            InitializeComponent();
+            infoLabel = new ToolStripLabel();
+            infoLabel.Text = "Текущие дата и время:";
+            dateLabel = new ToolStripLabel();
+            timeLabel = new ToolStripLabel();
+            statusStrip1.Items.Add(infoLabel);
+            statusStrip1.Items.Add(dateLabel);
+            statusStrip1.Items.Add(timeLabel);
+            timer = new Timer() { Interval = 1000 };
+            timer.Tick += timer_Tick;
+            timer.Start();
+        void timer_Tick(object sender, EventArgs e)
+        {
+            dateLabel.Text = DateTime.Now.ToLongDateString();
+            timeLabel.Text = DateTime.Now.ToLongTimeString();
+        }
+        private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Text files(*.txt)|*.txt|All files(*.*)|*.*";
+            if (openFileDialog.ShowDialog() == DialogResult.Cancel)
+                return;
+            string filename = openFileDialog.FileName;
+            string fileText = System.IO.File.ReadAllText(filename);
+            try
+            {
+                int con_fileText = Convert.ToInt32(fileText);
+                textBox2.Text = fileText;
+                MessageBox.Show("Файл открыт", "Сообщение");
+            }
+            catch
+            {
+                MessageBox.Show("Файл, который вы пытаетесь открыть, содержит некорректное значение!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textBox2.Clear();
+                richTextBox1.Clear();
+            }
+        }
+        private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (richTextBox1.Text != null)
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Title = "Save as...";
+                saveFileDialog.OverwritePrompt = true;
+                saveFileDialog.CheckPathExists = true;
+                saveFileDialog.Filter = "Text files(*.text)|*.txt|All files(*.*)|*.*";
+                saveFileDialog.ShowHelp = true;
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        string filename = saveFileDialog.FileName;
+                        System.IO.File.WriteAllText(filename, richTextBox1.Text);
+                        MessageBox.Show("Файл сохранен", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch 
+                    {
+                        
+                        MessageBox.Show("Файл является пустым", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+        private void создатьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            richTextBox1.Clear();
+            textBox2.Clear();
+            MessageBox.Show("Файл создан", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        private void закрытьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+        private void справкаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+            Form2 spravka = new Form2();
+            spravka.Show();
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                sw.Start();
+                int n = Convert.ToInt32(textBox2.Text); 
+                bool[] numbers = new bool[n+1]; 
+                for (int j = 0; j < numbers.Length; j++)
+                { 
+                    numbers[j] = true; 
+                }
+                richTextBox1.Clear();
+                if (n < 2)
+                {
+                    MessageBox.Show("Введенное значение меньше 2!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                numbers[0] = false;
+                numbers[1] = false;
+                int n_sqrt = (int)Math.Sqrt(n);
+                for (int i = 2; i < n_sqrt; i++)
+                {
+                    if (numbers[i] == false)
+                        continue;
+                    for (int j = Convert.ToInt32(Math.Pow(i,2)); j < numbers.Length; j+=i) 
+                    {
+                        if (j%i==0) 
+                        numbers[j] = false; 
+                        
+                    }
+                }
+                richTextBox1.AppendText("Простые числа:\n");
+                String s = ""; 
+                for (int i = 0; i < numbers.Length; i++) 
+                    if (numbers[i] == true) 
+                    {
+                        count++;
+                    }
+                progressBar1.Maximum = count;
+                for (int i = 0; i < numbers.Length; i++) 
+                    if (numbers[i] == true)
+                    {
+                        s += i.ToString() + " "; 
+                        progressBar1.Value++;
+                    }
+                odd = count - 1;
+                richTextBox1.AppendText(s); 
+                Form3 form3 = new Form3(this);
+                form3.Owner = this;
+                form3.Show();
+                sw.Stop();
+                ts = sw.Elapsed;
+                elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                ts.Hours, ts.Minutes, ts.Seconds,ts.Milliseconds / 10);
+                MessageBox.Show(elapsedTime, "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                even = 0; odd = 0;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Введенное значение некорректно!","Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+        }
+        private void очиститьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            textBox2.Clear();
+            richTextBox1.Clear();
+        }
+    }
+}
